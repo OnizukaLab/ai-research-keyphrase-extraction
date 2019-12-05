@@ -51,7 +51,6 @@ def extract_candidates(text_obj, no_subset=False):
 
     np_parser = nltk.RegexpParser(get_grammar(text_obj.lang))  # Noun phrase parser
     trees = np_parser.parse_sents(text_obj.pos_tagged)  # Generator with one tree per sentence
-
     for tree in trees:
         for subtree in tree.subtrees(filter=lambda t: t.label() == 'NP'):  # For each nounphrase
             # Concatenate the token with a space

@@ -16,6 +16,7 @@ from nltk.parse import CoreNLPParser
 
 import swisscom_ai.research_keyphrase.preprocessing.custom_stanford as custom_stanford
 from swisscom_ai.research_keyphrase.util.fileIO import read_file, write_string
+import spacy
 
 # If you want to use spacy , install it and uncomment the following import
 # import spacy
@@ -162,11 +163,11 @@ class PosTaggingSpacy(PosTagging):
         Concrete class of PosTagging using StanfordPOSTokenizer and StanfordPOSTagger
     """
 
-    def __init__(self, nlp=None, separator='|' ,lang='en'):
+    def __init__(self, nlp=None, separator='|'):
         if not nlp:
             print('Loading Spacy model')
-            #  self.nlp = spacy.load(lang, entity=False)
-            print('Spacy model loaded ' + lang)
+            #self.nlp = spacy.load("en_core_web_sm")
+            self.nlp = spacy.load("en_core_web_lg")
         else:
             self.nlp = nlp
         self.separator = separator
@@ -193,7 +194,7 @@ class PosTaggingCoreNLP(PosTagging):
     Provides a faster way to process several documents using since it doesn't require to load the model each time.
     """
 
-    def __init__(self, host='localhost' ,port=9000, separator='|'):
+    def __init__(self, host='172.20.0.1' ,port=9000, separator='|'):
         self.parser = CoreNLPParser(url=f'http://{host}:{port}')
         self.separator = separator
     

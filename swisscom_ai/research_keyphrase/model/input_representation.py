@@ -24,13 +24,16 @@ class InputTextObj:
 
         if stem:
             stemmer = PorterStemmer()
+            # 形容詞などを名詞に変換/進行形.過去形などを変換
             self.pos_tagged = [[(stemmer.stem(t[0]), t[1]) for t in sent] for sent in pos_tagged]
         else:
             self.pos_tagged = [[(t[0].lower(), t[1]) for t in sent] for sent in pos_tagged]
 
         temp = []
+        #tempは単語一覧を文毎に保持
         for sent in self.pos_tagged:
             s = []
+            #sentは単語と動詞/形容詞などを保持
             for elem in sent:
                 if len(elem[0]) < min_word_len:
                     s.append((elem[0], 'LESS'))
@@ -39,6 +42,8 @@ class InputTextObj:
             temp.append(s)
 
         self.pos_tagged = temp
+        #("self.pos_tagged")
+        #print(self.pos_tagged)
         # Convert some language-specific tag (NC, NE to NN) or ADJA ->JJ see convert method.
         if lang in ['fr', 'de']:
             self.pos_tagged = [[(tagged_token[0], convert(tagged_token[1])) for tagged_token in sentence] for sentence
