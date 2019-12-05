@@ -49,17 +49,10 @@ def _MMR(embdistrib, text_obj, candidates, X, beta, N, use_filtered, alias_thres
     selected_candidates = []
     unselected_candidates = [c for c in range(len(candidates))]
 
-   #文書との類似度を保存しておく変数
-    topofK_doc_sim = []
-    topofK_candidates = []
-
     # 一番文章ベクトルと類似度が高いもののインデックスをj
     j = np.argmax(doc_sim)
     selected_candidates.append(j)
     unselected_candidates.remove(j)
-    
-    topofK_doc_sim.append(doc_sim[j])
-    topofK_candidates.append(candidates[j])
 
     for _ in range(N - 1):
         selec_array = np.array(selected_candidates)
@@ -73,18 +66,9 @@ def _MMR(embdistrib, text_obj, candidates, X, beta, N, use_filtered, alias_thres
         item_idx = unselected_candidates[j]
         selected_candidates.append(item_idx)
         unselected_candidates.remove(item_idx)
-        #追加
-        topofK_doc_sim.append(doc_sim[item_idx])
-        topofK_candidates.append(candidates[item_idx])
-
-    f = open('topofK_candidates.txt','w')
-    f.write(str(topofK_candidates))
-    f = open('topofK_doc_simcd.txt','w')
-    f.write(str(topofK_doc_sim))
 
     # Not using normalized version of doc_sim for computing relevance
     relevance_list = max_normalization(doc_sim[selected_candidates]).tolist()
-    #print(relevance_list)
     aliases_list = get_aliases(sim_between[selected_candidates, :], candidates, alias_threshold)
 
     return candidates[selected_candidates].tolist(), relevance_list, aliases_list
@@ -110,9 +94,7 @@ def _MMR_sent(embdistrib, text_obj, candidates, X, beta, N, use_filtered):
     #全部の類似度を求めるためにNを変更
     N = len(candidates)
     doc_embedd = extract_doc_embedding(embdistrib, text_obj, use_filtered)  # Extract doc embedding
-    print("finished doc_embedd")
     doc_sim = cosine_similarity(X, doc_embedd.reshape(1, -1))
-    print("finished doc_sim")
     doc_sim_norm = doc_sim/np.max(doc_sim)
     doc_sim_norm = 0.5 + (doc_sim_norm - np.average(doc_sim_norm)) / np.std(doc_sim_norm)
 
@@ -125,26 +107,12 @@ def _MMR_sent(embdistrib, text_obj, candidates, X, beta, N, use_filtered):
 
     selected_candidates = []
     unselected_candidates = [c for c in range(len(candidates))]
-    #文書との類似度を保存しておく変数
-    topofK_doc_sim = []
-    topofK_candidates = []
-
     # 一番文章ベクトルと類似度が高いもののインデックスをj
     j = np.argmax(doc_sim)
     selected_candidates.append(j)
     unselected_candidates.remove(j)
-    #print("topofK doc_sim\n")
-    #print(candidates[j])
-    #print(doc_sim[j])
 
-    
-    topofK_doc_sim.append(doc_sim[j])
-    topofK_candidates.append(candidates[j])
-    print(N)
-    print("finished print N")
-    #for _ in range(N - 1):
-    for i in range(N - 1):
-        print(i)
+    for _ in range(N - 1):
         selec_array = np.array(selected_candidates)
         unselec_array = np.array(unselected_candidates)
 
@@ -156,21 +124,9 @@ def _MMR_sent(embdistrib, text_obj, candidates, X, beta, N, use_filtered):
         item_idx = unselected_candidates[j]
         selected_candidates.append(item_idx)
         unselected_candidates.remove(item_idx)
-        #追加
-        topofK_doc_sim.append(doc_sim[item_idx])
-        topofK_candidates.append(candidates[item_idx])
-    print("finished for roop")
-    #print(topofK_candidates)
-    #print(topofK_doc_sim)
-    f = open('topofK_candidates.txt','w')
-    f.write(str(topofK_candidates))
-    f = open('topofK_doc_simcd.txt','w')
-    f.write(str(topofK_doc_sim))
 
     # Not using normalized version of doc_sim for computing relevance
     relevance_list = max_normalization(doc_sim[selected_candidates]).tolist()
-    #print(relevance_list)
-    print("finished _MMR_sent")
     return candidates[selected_candidates].tolist(), relevance_list
 
 
